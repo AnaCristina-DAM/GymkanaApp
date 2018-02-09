@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText nombre;
+    EditText nom;
     EditText edad;
     EditText localidad;
     EditText provincia;
@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        nombre = (EditText) findViewById(R.id.et_nombre);
+        nom = (EditText) findViewById(R.id.et_nombre);
         edad = (EditText) findViewById(R.id.et_edad);
         localidad = (EditText) findViewById(R.id.et_localidad);
         provincia = (EditText) findViewById(R.id.et_provincia);
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         comenzar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Persona persona = new Persona(nombre.getText().toString(),
+                Persona persona = new Persona(nom.getText().toString(),
                         Integer.parseInt(edad.getText().toString()),
                         localidad.getText().toString(),
                         provincia.getText().toString());
