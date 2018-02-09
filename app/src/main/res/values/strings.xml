@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Gymkana</string>
+    <!--Elementos MainActivity-->
+    <string name="am_titulo">¡Registrate!</string>
+    <string name="am_nombre">Nombre:</string>
+    <string name="am_edad">Edad:</string>
+    <string name="am_localidad">Localidad:</string>
+    <string name="am_provincia">Provincia:</string>
+    <string name="am_btncomienzo">¡COMENZAR!</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="t_pista">Pista</string>
+    <!--Elementos Dialogo-->
+    <string name="d_titulo">PISTA</string>
+    <string name="d_lugar1">Lugar1</string>
+    <string name="d_lugar2">Lugar2</string>
+    <string name="d_lugar3">Lugar3</string>
+    <string name="d_lugar4">Lugar4</string>
 </resources>
