@@ -3,8 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/opt_comprobar"
+        android:title="@string/t_comprobar"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/opt_pista"
         android:title="@string/t_pista"
         android:icon="@drawable/pista"
         app:showAsAction="always"/>
+
 </menu>

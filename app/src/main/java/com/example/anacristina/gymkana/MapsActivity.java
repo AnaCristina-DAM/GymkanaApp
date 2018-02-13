@@ -3,16 +3,21 @@ package com.example.anacristina.gymkana;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AlignmentSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,21 +26,89 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
 
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    // Elementos del layout:
+    private Toolbar toolbar;
     private GoogleMap mMap;
+
+    // Datos del jugador:
+    Persona persona;
+
+    // BASE DE DATOS:
+    SQLiteDatabase b_datos;
+
+    // ARRAY - Lugares:
+    ArrayList<Lugar> lugares;
+
+    // LUGAR:
+    Lugar lugar;
+
+    // INDICE:
+    int indice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-    }
+        // TOOLBAR - Menú de opciones del juego:
+        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
 
+        // JUGADOR:
+        // Recogemos los datos del jugador:
+        persona = (Persona) getIntent().getExtras().get("JUGADOR");
+        //System.out.println("JUGADOR: " + persona.getNombre());
+
+        // >>> BASE DE DATOS:
+
+        // Utilizamos un objeto "SQLiteDatabase" para conectarnos a la base de datos de la aplicación:
+        b_datos = this.openOrCreateDatabase("GymkanaApp", MODE_PRIVATE, null);
+
+        // ARRAY - Lugares:
+        lugares = new ArrayList<Lugar> ();
+
+        // Obtenemos los datos almacenados en la base de datos:
+
+        Cursor c = b_datos.rawQuery("SELECT * FROM LUGARES;", null);
+
+        if (c.getCount() >= 1){
+
+            c.moveToFirst();
+            do{
+
+                System.out.println("RECUPERAR: " + c.getString(c.getColumnIndex("ID")));
+                System.out.println(c.getString(c.getColumnIndex("NOMBRE")));
+                System.out.println(c.getDouble(c.getColumnIndex("LATITUD")));
+                System.out.println(c.getDouble(c.getColumnIndex("LONGITUD")));
+
+                // Recuperamos la información del lugar:
+                Lugar x = new Lugar(c.getString(c.getColumnIndex("NOMBRE")),
+                                    c.getDouble(c.getColumnIndex("LATITUD")),
+                                    c.getDouble(c.getColumnIndex("LONGITUD")),
+                                    c.getString(c.getColumnIndex("PISTA")));
+
+                // Añadimos el lugar a nuestro "ArrayList":
+                lugares.add(x);
+
+            }
+            while(c.moveToNext());
+
+        }
+
+        // LUGAR:
+        indice = 0;
+        lugar = lugares.get(0);
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -48,19 +121,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if ( (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ) {
+            System.out.println("-------------------- MAPAS: OnMapReady");
             mMap.setMyLocationEnabled(true);
             return;
         }
+        else{
+            // Si no tenemos permisos, mostramos un mensaje y cerramos la aplicación:
+            // PERMISOS DENEGADOS:
+            String text = getResources().getString(R.string.permisos_denegados);
+            Spannable centeredText = new SpannableString(text);
+            centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            Toast.makeText(this, centeredText, Toast.LENGTH_SHORT).show();
+            // Cerramos la aplicación:
+            finish();
+        }
 
+        // Add a marker in Sydney and move the camera.
+        //LatLng sydney = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney."));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
+    // Inflamos el layout para mostrar los items del menú:
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         // El método ".inflate()" nos permite inflar el layout del menú y crear los items del mismo; para ello,
@@ -69,15 +155,78 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
+    // Configuramos las opciones del menú:
     @Override
     public boolean onOptionsItemSelected(MenuItem opcion_menu) {
 
+        // Almacenamos el ID de la opción selecionada:
         int opcion = opcion_menu.getItemId();
+
+        // COMPROBAR:
+        if(opcion==R.id.opt_comprobar){
+
+            // Comprobamos la ubicación:
+
+            // UBICACIÓN CORRECTA:
+            // Si es la última ubicación, mostramos un mensaje y almacenamos los datos del juego:
+            if (indice == lugares.size() - 1){
+
+                // Construimos el mensaje:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                // TÍTULO:
+                String titulo = getResources().getString(R.string.fin_titulo);
+                Spannable centeredTitulo = new SpannableString(titulo);
+                centeredTitulo.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, titulo.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                builder.setTitle(centeredTitulo);
+                // MENSAJE:
+                String texto = getResources().getString(R.string.fin_mensaje);
+                Spannable centeredTexto = new SpannableString(texto);
+                centeredTexto.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, texto.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                builder.setMessage(centeredTexto);
+                // BOTÓN POSITIVO:
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+
+                // Mostramos el mensaje:
+                AlertDialog mensaje = builder.create();
+                mensaje.show();
+
+                // Bloqueamos los botones:
+                toolbar.setEnabled(false);
+
+                // Almacenamos los datos del juego:
+                // >>>>> PARTE DE JONATHAN
+
+            }
+            // Si no es la última ubicación, mostramos un mensaje y avanzamos a la ubicación siguiente:
+            else{
+                // Mensaje:
+                String text = getResources().getString(R.string.ub_correcta);
+                Spannable centeredText = new SpannableString(text);
+                centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+                // Lugar:
+                indice = indice + 1;
+                lugar = lugares.get(indice);
+            }
+
+            // UBICACIÓN INCORRECTA:
+            // Mensaje:
+            String text = getResources().getString(R.string.ub_incorrecta);
+            Spannable centeredText = new SpannableString(text);
+            centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+
+            return true;
+        }
 
         // PISTA:
         if(opcion==R.id.opt_pista){
 
-
+            // Construimos el mensaje:
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             // TÍTULO:
             String titulo = getResources().getString(R.string.d_titulo);
@@ -85,7 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             centeredTitulo.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, titulo.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             builder.setTitle(centeredTitulo);
             // MENSAJE:
-            String texto = getResources().getString(R.string.d_lugar1);
+            String texto = lugar.getPista();
             Spannable centeredTexto = new SpannableString(texto);
             centeredTexto.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, texto.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             builder.setMessage(centeredTexto);
@@ -102,6 +251,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             return true;
         }
+
         return false;
+
     }
 }

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:theme="@style/AppTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.anacristina.gymkana.MainActivity">
@@ -11,87 +14,102 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/am_titulo"
-        android:textSize="30dp"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/tv_nombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/am_nombre"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"/>
+        android:layout_marginTop="70dp"
+        android:textAlignment="center"/>
 
     <EditText
         android:id="@+id/et_nombre"
         android:layout_width="244dp"
         android:layout_height="47dp"
-        android:textSize="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="90dp"/>
+        android:layout_marginTop="90dp"
+        android:inputType="text|textPersonName"
+        android:textAlignment="center"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tv_edad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/am_edad"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="140dp"/>
+        android:layout_marginTop="140dp"
+        android:textAlignment="center"/>
 
     <EditText
         android:id="@+id/et_edad"
         android:layout_width="125dp"
         android:layout_height="47dp"
-        android:textSize="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="160dp"/>
+        android:layout_marginTop="160dp"
+        android:inputType="number"
+        android:textSize="20sp"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/tv_localidad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/am_localidad"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="210dp"/>
+        android:layout_marginTop="210dp"
+        android:textAlignment="center"/>
 
     <EditText
         android:id="@+id/et_localidad"
-        android:layout_width="236dp"
+        android:layout_width="280dp"
         android:layout_height="46dp"
-        android:textSize="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="230dp"/>
+        android:layout_marginTop="230dp"
+        android:inputType="text|textPersonName"
+        android:textAlignment="center"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tv_provincia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/am_provincia"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="280dp"/>
+        android:layout_marginTop="280dp"
+        android:textAlignment="center"/>
 
     <EditText
         android:id="@+id/et_provincia"
         android:layout_width="236dp"
         android:layout_height="46dp"
-        android:textSize="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="300dp"/>
+        android:layout_marginTop="300dp"
+        android:inputType="text|textPersonName"
+        android:textAlignment="center"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/btn_comenzar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/am_btncomienzo"
-        android:textSize="20dp"
-        android:layout_marginBottom="28dp"
+        android:textSize="25sp"
+        android:layout_marginBottom="30dp"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/tv_titulo"
-        android:layout_alignStart="@+id/tv_titulo" />" />
+        android:layout_alignStart="@+id/tv_titulo" />
 
 
 </RelativeLayout>

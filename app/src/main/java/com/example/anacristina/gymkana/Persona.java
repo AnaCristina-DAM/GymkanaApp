@@ -1,10 +1,12 @@
 package com.example.anacristina.gymkana;
 
+import java.io.Serializable;
+
 /**
  * Created by Azahara on 09/02/2018.
  */
 
-public class Persona {
+public class Persona implements Serializable{
 
     private String nombre;
     private int edad;

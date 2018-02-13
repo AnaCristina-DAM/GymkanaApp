@@ -1,19 +1,38 @@
 <resources>
-    <string name="app_name">Gymkana</string>
+    <string name="app_name">GYMKANA</string>
+
     <!--Elementos MainActivity-->
-    <string name="am_titulo">¡Registrate!</string>
+    <string name="am_titulo">¡Regístrate!</string>
     <string name="am_nombre">Nombre:</string>
     <string name="am_edad">Edad:</string>
     <string name="am_localidad">Localidad:</string>
     <string name="am_provincia">Provincia:</string>
     <string name="am_btncomienzo">¡COMENZAR!</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="am_error">DEBE RELLENAR TODOS LOS CAMPOS PARA PODER JUGAR</string>
 
-    <string name="t_pista">Pista</string>
+    <!--Elementos MapsActivity-->
+    <string name="title_activity_maps">MAP</string>
+    <string name="t_comprobar">COMPROBAR</string>
+    <string name="t_pista">PISTA</string>
+
     <!--Elementos Dialogo-->
     <string name="d_titulo">PISTA</string>
     <string name="d_lugar1">Lugar1</string>
     <string name="d_lugar2">Lugar2</string>
     <string name="d_lugar3">Lugar3</string>
     <string name="d_lugar4">Lugar4</string>
+
+    <!-- Conexión -->
+    <string name="cx_noConexion">EL DISPOSITIVO NO ESTÁ CONECTADO A INTERNET</string>
+
+    <!-- Pemisos. -->
+    <string name="permisos_otorgados">PERMISOS OTORGADOS</string>
+    <string name="permisos_denegados">DEBE CONCEDER PERMISOS A LA APLICACIÓN PARA PODER UTILIZARLA</string>
+
+    <!-- Juego -->
+    <string name="ub_correcta">¡UBICACIÓN CORRECTA! DEBE ENCONTRAR UN NUEVO LUGAR</string>
+    <string name="ub_incorrecta">¡UBICACIÓN INCORRECTA! SIGA BUSCANDO EL LUGAR CORRECTO</string>
+    <string name="fin_titulo">¡FELICIDADES!</string>
+    <string name="fin_mensaje">HA ENCONTRADO TODOS LOS LUGARES Y HA FINALIZADO EL JUEGO.</string>
+
 </resources>
