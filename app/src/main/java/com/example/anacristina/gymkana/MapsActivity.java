@@ -240,8 +240,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         posicionJuego.setLatitude(lugares.get(indice).getLatitud());
                         posicionJuego.setLongitude(lugares.get(indice).getLongitud());
 
-                        //Miramos cuanta distancia hay entre los dos puntos:
+                        // POSICION JUEGO:
+                        System.out.println(posicionJuego.getLatitude());
+                        System.out.println(posicionJuego.getLongitude());
+
+                        //Miramos cuánta distancia hay entre los dos puntos:
                         float distance = posicionActual.distanceTo(posicionJuego);
+                        System.out.println("DISTANCIA: " + distance);
 
                         //Si hay menos de 2 metros:
                         if (distance<2){
