@@ -206,6 +206,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationManager locationManager = (LocationManager)
                     getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setAltitudeRequired(false);
+            criteria.setBearingRequired(false);
+            criteria.setCostAllowed(true);
+            criteria.setPowerRequirement(Criteria.POWER_LOW);
 
             // Comprobamos si el dispositivo tiene la ubicación activada:
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -223,9 +228,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Recojemos la última posición conocida por el GPS:
                     Location posicionActual = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
-
                     // Comprobamos que la posición no sea "NULL":
                     if (posicionActual != null){
+
                         // POSICION ACTUAL:
                         System.out.println(posicionActual.getLatitude());
                         System.out.println(posicionActual.getLongitude());
