@@ -17,15 +17,17 @@
 
     <!--Elementos Dialogo-->
     <string name="d_titulo">PISTA</string>
-    <string name="d_lugar1">Lugar1</string>
-    <string name="d_lugar2">Lugar2</string>
-    <string name="d_lugar3">Lugar3</string>
-    <string name="d_lugar4">Lugar4</string>
 
     <!-- Conexión -->
     <string name="cx_noConexion">EL DISPOSITIVO NO ESTÁ CONECTADO A INTERNET</string>
 
-    <!-- Pemisos. -->
+    <!-- GPS -->
+    <string name="cx_noGPS">EL GPS NO ESTÁ CONECTADO</string>
+
+    <!-- POSICIÓN -->
+    <string name="ps_error">UBICACIÓN DESCONOCIDA</string>
+
+    <!-- Pemisos -->
     <string name="permisos_otorgados">PERMISOS OTORGADOS</string>
     <string name="permisos_denegados">DEBE CONCEDER PERMISOS A LA APLICACIÓN PARA PODER UTILIZARLA</string>
 
@@ -34,7 +36,5 @@
     <string name="ub_incorrecta">¡UBICACIÓN INCORRECTA! SIGA BUSCANDO EL LUGAR CORRECTO</string>
     <string name="fin_titulo">¡FELICIDADES!</string>
     <string name="fin_mensaje">HA ENCONTRADO TODOS LOS LUGARES Y HA FINALIZADO EL JUEGO.</string>
-    <string name="acierto">CORRECTO !!!</string>
-    <string name="acierto_mensaje">Ha acertado el punto, vaya a por el siguiente</string>
 
 </resources>

@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -128,25 +130,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-            System.out.println("-------------------- MAPAS: OnMapReady");
-            mMap.setMyLocationEnabled(true);
-            return;
-        } else {
-            // Si no tenemos permisos, mostramos un mensaje y cerramos la aplicación:
-            // PERMISOS DENEGADOS:
-            String text = getResources().getString(R.string.permisos_denegados);
+
+
+        // Comprobamos la ubicación:
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        // Comprobamos si el dispositivo tiene el GPS conectado:
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+
+            System.out.println("-------------------- MAPS: Comprobar GPS");
+
+            // GPS - CONECTADO:
+
+            //Miramos si tiene los permisos necesarios:
+            if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+
+                System.out.println("-------------------- MAPAS: OnMapReady");
+                mMap.setMyLocationEnabled(true);
+
+                // Añadimos un marcador en la posición de inicio:
+                //LatLng inicio = new LatLng(posicionActual.getLatitude(), posicionActual.getLongitude());
+                //mMap.addMarker(new MarkerOptions().position(inicio).title("INICIO"));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(inicio));
+
+                return;
+
+            }
+            else{
+                // Si no tenemos permisos, mostramos un mensaje y cerramos la aplicación:
+                // PERMISOS DENEGADOS:
+                String text = getResources().getString(R.string.permisos_denegados);
+                Spannable centeredText = new SpannableString(text);
+                centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                Toast.makeText(this, centeredText, Toast.LENGTH_SHORT).show();
+                // Cerramos la aplicación:
+                finish();
+            }
+        }
+        else{
+            // GPS - NO CONECTADO:
+            // Si el GPS no está conectado, mostramos un mensaje:
+            String text = getResources().getString(R.string.cx_noGPS);
             Spannable centeredText = new SpannableString(text);
             centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             Toast.makeText(this, centeredText, Toast.LENGTH_SHORT).show();
             // Cerramos la aplicación:
             finish();
         }
-
-        // Add a marker in Sydney and move the camera.
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney."));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
     }
 
@@ -174,91 +206,122 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
 
-            //Miramos si tiene los permisos necesarios
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                //return TODO;
-            }
-            //Recojemos la ultima posicion conocida por el GPS
-            Location posicionActual = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            // Comprobamos si el dispositivo tiene el GPS conectado:
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
 
-            //Recojemos los datos del puntos
-            Location posicionJuego = new Location("Punto del juego");
-            posicionJuego.setLatitude(lugares.get(indice).getLatitud());
-            posicionJuego.setLongitude(lugares.get(indice).getLongitud());
+                System.out.println("-------------------- MAPS: Comprobar GPS");
 
-            //Miramos cuanta distancia hay entre los dos puntos
-            float distance = posicionActual.distanceTo(posicionJuego);
+                // GPS - CONECTADO:
 
-            //Si hay menos de 2 metros
-            if (distance<2){
-                // UBICACIÓN CORRECTA:
-                // Si es la última ubicación, mostramos un mensaje y almacenamos los datos del juego:
-                if (indice == lugares.size() - 1){
+                //Miramos si tiene los permisos necesarios:
+                if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
 
-                    // Construimos el mensaje:
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    // TÍTULO:
-                    String titulo = getResources().getString(R.string.fin_titulo);
-                    Spannable centeredTitulo = new SpannableString(titulo);
-                    centeredTitulo.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, titulo.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                    builder.setTitle(centeredTitulo);
-                    // MENSAJE:
-                    String texto = getResources().getString(R.string.fin_mensaje);
-                    Spannable centeredTexto = new SpannableString(texto);
-                    centeredTexto.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, texto.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                    builder.setMessage(centeredTexto);
-                    // BOTÓN POSITIVO:
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int id){
-                            dialog.cancel();
+                    System.out.println("-------------------- GPS: Comprobar posición");
+
+                    //Recojemos la última posición conocida por el GPS:
+                    Location posicionActual = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
+
+                    // Comprobamos que la posición no sea "NULL":
+                    if (posicionActual != null){
+                        // POSICION ACTUAL:
+                        System.out.println(posicionActual.getLatitude());
+                        System.out.println(posicionActual.getLongitude());
+
+                        //Recojemos los datos del puntos:
+                        Location posicionJuego = new Location("Punto del juego");
+                        posicionJuego.setLatitude(lugares.get(indice).getLatitud());
+                        posicionJuego.setLongitude(lugares.get(indice).getLongitud());
+
+                        //Miramos cuanta distancia hay entre los dos puntos:
+                        float distance = posicionActual.distanceTo(posicionJuego);
+
+                        //Si hay menos de 2 metros:
+                        if (distance<2){
+
+                            // UBICACIÓN CORRECTA:
+                            // Si es la última ubicación, mostramos un mensaje y almacenamos los datos del juego:
+                            if (indice == lugares.size() - 1){
+
+                                // Construimos el mensaje:
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                                // TÍTULO:
+                                String titulo = getResources().getString(R.string.fin_titulo);
+                                Spannable centeredTitulo = new SpannableString(titulo);
+                                centeredTitulo.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, titulo.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                                builder.setTitle(centeredTitulo);
+                                // MENSAJE:
+                                String texto = getResources().getString(R.string.fin_mensaje);
+                                Spannable centeredTexto = new SpannableString(texto);
+                                centeredTexto.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, texto.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                                builder.setMessage(centeredTexto);
+                                // BOTÓN POSITIVO:
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                                    public void onClick(DialogInterface dialog, int id){
+                                        dialog.cancel();
+                                    }
+                                });
+
+                                // Mostramos el mensaje:
+                                AlertDialog mensaje = builder.create();
+                                mensaje.show();
+
+                                // Bloqueamos los botones:
+                                findViewById(R.id.opt_comprobar).setEnabled(false);
+                                findViewById(R.id.opt_pista).setEnabled(false);
+
+                                // Almacenamos los datos del juego:
+                                // >>>>> PARTE DE JONATHAN
+
+                            }
+                            // Si no es la última ubicación, mostramos un mensaje y avanzamos a la ubicación siguiente:
+                            else{
+                                // Mensaje:
+                                String text = getResources().getString(R.string.ub_correcta);
+                                Spannable centeredText = new SpannableString(text);
+                                centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                                Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+                                // Lugar:
+                                indice = indice + 1;
+                                lugar = lugares.get(indice);
+                            }
                         }
-                    });
-
-                    // Mostramos el mensaje:
-                    AlertDialog mensaje = builder.create();
-                    mensaje.show();
-
-                    // Bloqueamos los botones:
-                    findViewById(R.id.opt_comprobar).setEnabled(false);
-                    findViewById(R.id.opt_pista).setEnabled(false);
-
-                    // Almacenamos los datos del juego:
-                    // >>>>> PARTE DE JONATHAN
+                        //Si hay más de 2 metros:
+                        else{
+                            // UBICACIÓN INCORRECTA:
+                            // Mensaje:
+                            String text = getResources().getString(R.string.ub_incorrecta);
+                            Spannable centeredText = new SpannableString(text);
+                            centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                            Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+                        }
+                    }
+                    else{
+                        // MENSAJE:
+                        String text = getResources().getString(R.string.ps_error);
+                        Spannable centeredText = new SpannableString(text);
+                        centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                        Toast.makeText(this, centeredText, Toast.LENGTH_SHORT).show();
+                    }
 
                 }
-                // Si no es la última ubicación, mostramos un mensaje y avanzamos a la ubicación siguiente:
                 else{
-                    // Mensaje:
-                    String text = getResources().getString(R.string.ub_correcta);
+                    // Si no tenemos permisos, mostramos un mensaje:
+                    // PERMISOS DENEGADOS:
+                    String text = getResources().getString(R.string.permisos_denegados);
                     Spannable centeredText = new SpannableString(text);
-                    centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                    Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
-                    // Lugar:
-                    indice = indice + 1;
-                    lugar = lugares.get(indice);
+                    centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    Toast.makeText(this, centeredText, Toast.LENGTH_SHORT).show();
                 }
             }
-
-
-
-
-
-
-
-
-            // UBICACIÓN INCORRECTA:
-            // Mensaje:
-            String text = getResources().getString(R.string.ub_incorrecta);
-            Spannable centeredText = new SpannableString(text);
-            centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+            else{
+                // GPS - NO CONECTADO:
+                // Si el GPS no está conectado, mostramos un mensaje:
+                String text = getResources().getString(R.string.cx_noGPS);
+                Spannable centeredText = new SpannableString(text);
+                centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                Toast.makeText(this, centeredText, Toast.LENGTH_SHORT).show();
+            }
 
             return true;
         }
@@ -295,4 +358,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
 
     }
+
 }
