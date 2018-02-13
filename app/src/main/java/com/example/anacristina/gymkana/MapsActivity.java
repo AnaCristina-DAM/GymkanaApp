@@ -1,6 +1,7 @@
 package com.example.anacristina.gymkana;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -195,7 +196,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mensaje.show();
 
                 // Bloqueamos los botones:
-                toolbar.setEnabled(false);
+                findViewById(R.id.opt_comprobar).setEnabled(false);
+                findViewById(R.id.opt_pista).setEnabled(false);
 
                 // Almacenamos los datos del juego:
                 // >>>>> PARTE DE JONATHAN
