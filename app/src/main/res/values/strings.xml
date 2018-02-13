@@ -34,5 +34,7 @@
     <string name="ub_incorrecta">¡UBICACIÓN INCORRECTA! SIGA BUSCANDO EL LUGAR CORRECTO</string>
     <string name="fin_titulo">¡FELICIDADES!</string>
     <string name="fin_mensaje">HA ENCONTRADO TODOS LOS LUGARES Y HA FINALIZADO EL JUEGO.</string>
+    <string name="acierto">CORRECTO !!!</string>
+    <string name="acierto_mensaje">Ha acertado el punto, vaya a por el siguiente</string>
 
 </resources>

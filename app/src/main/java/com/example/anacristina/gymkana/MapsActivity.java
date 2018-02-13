@@ -2,10 +2,14 @@ package com.example.anacristina.gymkana;
 
 import android.Manifest;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -75,16 +79,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         b_datos = this.openOrCreateDatabase("GymkanaApp", MODE_PRIVATE, null);
 
         // ARRAY - Lugares:
-        lugares = new ArrayList<Lugar> ();
+        lugares = new ArrayList<Lugar>();
 
         // Obtenemos los datos almacenados en la base de datos:
 
         Cursor c = b_datos.rawQuery("SELECT * FROM LUGARES;", null);
 
-        if (c.getCount() >= 1){
+        if (c.getCount() >= 1) {
 
             c.moveToFirst();
-            do{
+            do {
 
                 System.out.println("RECUPERAR: " + c.getString(c.getColumnIndex("ID")));
                 System.out.println(c.getString(c.getColumnIndex("NOMBRE")));
@@ -93,15 +97,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // Recuperamos la información del lugar:
                 Lugar x = new Lugar(c.getString(c.getColumnIndex("NOMBRE")),
-                                    c.getDouble(c.getColumnIndex("LATITUD")),
-                                    c.getDouble(c.getColumnIndex("LONGITUD")),
-                                    c.getString(c.getColumnIndex("PISTA")));
+                        c.getDouble(c.getColumnIndex("LATITUD")),
+                        c.getDouble(c.getColumnIndex("LONGITUD")),
+                        c.getString(c.getColumnIndex("PISTA")));
 
                 // Añadimos el lugar a nuestro "ArrayList":
                 lugares.add(x);
 
             }
-            while(c.moveToNext());
+            while (c.moveToNext());
 
         }
 
@@ -124,12 +128,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        if ( (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ) {
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
             System.out.println("-------------------- MAPAS: OnMapReady");
             mMap.setMyLocationEnabled(true);
             return;
-        }
-        else{
+        } else {
             // Si no tenemos permisos, mostramos un mensaje y cerramos la aplicación:
             // PERMISOS DENEGADOS:
             String text = getResources().getString(R.string.permisos_denegados);
@@ -149,10 +152,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Inflamos el layout para mostrar los items del menú:
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         // El método ".inflate()" nos permite inflar el layout del menú y crear los items del mismo; para ello,
         // pasamos como parámetros tanto el layout con los items como el menú a inflar.
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -164,56 +167,91 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int opcion = opcion_menu.getItemId();
 
         // COMPROBAR:
-        if(opcion==R.id.opt_comprobar){
+        if (opcion == R.id.opt_comprobar) {
 
             // Comprobamos la ubicación:
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
 
-            // UBICACIÓN CORRECTA:
-            // Si es la última ubicación, mostramos un mensaje y almacenamos los datos del juego:
-            if (indice == lugares.size() - 1){
-
-                // Construimos el mensaje:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                // TÍTULO:
-                String titulo = getResources().getString(R.string.fin_titulo);
-                Spannable centeredTitulo = new SpannableString(titulo);
-                centeredTitulo.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, titulo.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                builder.setTitle(centeredTitulo);
-                // MENSAJE:
-                String texto = getResources().getString(R.string.fin_mensaje);
-                Spannable centeredTexto = new SpannableString(texto);
-                centeredTexto.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, texto.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                builder.setMessage(centeredTexto);
-                // BOTÓN POSITIVO:
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
-                        dialog.cancel();
-                    }
-                });
-
-                // Mostramos el mensaje:
-                AlertDialog mensaje = builder.create();
-                mensaje.show();
-
-                // Bloqueamos los botones:
-                findViewById(R.id.opt_comprobar).setEnabled(false);
-                findViewById(R.id.opt_pista).setEnabled(false);
-
-                // Almacenamos los datos del juego:
-                // >>>>> PARTE DE JONATHAN
-
+            //Miramos si tiene los permisos necesarios
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                //return TODO;
             }
-            // Si no es la última ubicación, mostramos un mensaje y avanzamos a la ubicación siguiente:
-            else{
-                // Mensaje:
-                String text = getResources().getString(R.string.ub_correcta);
-                Spannable centeredText = new SpannableString(text);
-                centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
-                // Lugar:
-                indice = indice + 1;
-                lugar = lugares.get(indice);
+            //Recojemos la ultima posicion conocida por el GPS
+            Location posicionActual = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
+            //Recojemos los datos del puntos
+            Location posicionJuego = new Location("Punto del juego");
+            posicionJuego.setLatitude(lugares.get(indice).getLatitud());
+            posicionJuego.setLongitude(lugares.get(indice).getLongitud());
+
+            //Miramos cuanta distancia hay entre los dos puntos
+            float distance = posicionActual.distanceTo(posicionJuego);
+
+            //Si hay menos de 2 metros
+            if (distance<2){
+                // UBICACIÓN CORRECTA:
+                // Si es la última ubicación, mostramos un mensaje y almacenamos los datos del juego:
+                if (indice == lugares.size() - 1){
+
+                    // Construimos el mensaje:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    // TÍTULO:
+                    String titulo = getResources().getString(R.string.fin_titulo);
+                    Spannable centeredTitulo = new SpannableString(titulo);
+                    centeredTitulo.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, titulo.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    builder.setTitle(centeredTitulo);
+                    // MENSAJE:
+                    String texto = getResources().getString(R.string.fin_mensaje);
+                    Spannable centeredTexto = new SpannableString(texto);
+                    centeredTexto.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, texto.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    builder.setMessage(centeredTexto);
+                    // BOTÓN POSITIVO:
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int id){
+                            dialog.cancel();
+                        }
+                    });
+
+                    // Mostramos el mensaje:
+                    AlertDialog mensaje = builder.create();
+                    mensaje.show();
+
+                    // Bloqueamos los botones:
+                    findViewById(R.id.opt_comprobar).setEnabled(false);
+                    findViewById(R.id.opt_pista).setEnabled(false);
+
+                    // Almacenamos los datos del juego:
+                    // >>>>> PARTE DE JONATHAN
+
+                }
+                // Si no es la última ubicación, mostramos un mensaje y avanzamos a la ubicación siguiente:
+                else{
+                    // Mensaje:
+                    String text = getResources().getString(R.string.ub_correcta);
+                    Spannable centeredText = new SpannableString(text);
+                    centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+                    // Lugar:
+                    indice = indice + 1;
+                    lugar = lugares.get(indice);
+                }
             }
+
+
+
+
+
+
+
 
             // UBICACIÓN INCORRECTA:
             // Mensaje:
