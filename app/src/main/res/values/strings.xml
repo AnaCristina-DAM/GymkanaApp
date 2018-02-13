@@ -22,7 +22,7 @@
     <string name="cx_noConexion">EL DISPOSITIVO NO ESTÁ CONECTADO A INTERNET</string>
 
     <!-- GPS -->
-    <string name="cx_noGPS">EL GPS NO ESTÁ CONECTADO</string>
+    <string name="cx_noGPS">ACTIVE SU UBICACIÓN</string>
 
     <!-- POSICIÓN -->
     <string name="ps_error">UBICACIÓN DESCONOCIDA</string>

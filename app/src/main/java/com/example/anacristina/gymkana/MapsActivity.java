@@ -137,8 +137,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        // Comprobamos si el dispositivo tiene el GPS conectado:
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+        // Comprobamos si el dispositivo tiene la ubicación activada:
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
 
             System.out.println("-------------------- MAPS: Comprobar GPS");
 
@@ -170,8 +171,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         else{
-            // GPS - NO CONECTADO:
-            // Si el GPS no está conectado, mostramos un mensaje:
+            // UBICACIÓN - NO CONECTADO:
+            // Si la ubicación no está activada, mostramos un mensaje:
             String text = getResources().getString(R.string.cx_noGPS);
             Spannable centeredText = new SpannableString(text);
             centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -206,12 +207,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
 
-            // Comprobamos si el dispositivo tiene el GPS conectado:
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            // Comprobamos si el dispositivo tiene la ubicación activada:
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
 
                 System.out.println("-------------------- MAPS: Comprobar GPS");
 
-                // GPS - CONECTADO:
+                // UBICACIÓN - CONECTADO:
 
                 //Miramos si tiene los permisos necesarios:
                 if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
@@ -315,8 +317,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
             else{
-                // GPS - NO CONECTADO:
-                // Si el GPS no está conectado, mostramos un mensaje:
+                // UBICACIÓN - NO CONECTADO:
+                // Si la ubicación no está activada, mostramos un mensaje:
                 String text = getResources().getString(R.string.cx_noGPS);
                 Spannable centeredText = new SpannableString(text);
                 centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
