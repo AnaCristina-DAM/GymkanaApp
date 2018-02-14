@@ -30,6 +30,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -293,6 +295,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 Spannable centeredText = new SpannableString(text);
                                 centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                                 Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
+                                LatLng posicion = new LatLng(posicionJuego.getLatitude(),posicionJuego.getLongitude());
+                                mMap.addMarker( new MarkerOptions()
+                                        .position(posicion)
+                                        .title( indice+"º Pista" )
+                                        .icon( BitmapDescriptorFactory.defaultMarker(
+                                                BitmapDescriptorFactory.HUE_RED )));
                                 // Lugar:
                                 indice = indice + 1;
                                 lugar = lugares.get(indice);
