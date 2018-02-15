@@ -10,8 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -36,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -57,6 +63,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // INDICE:
     int indice;
+
+    //MUSICA:
+    MediaPlayer mp;
+
+    // SONIDOS:
+    protected SoundPool sn_punto;
+    protected int sn_punto_id;
+    protected SoundPool sn_fin;
+    protected int sn_fin_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +132,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         indice = 0;
         lugar = lugares.get(0);
 
+        //MUSICA:
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        mp = MediaPlayer.create(this, R.raw.ffxbattle_theme);
+        mp.setLooping(true);
+
+        // SONIDOS - Sonidos:
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+            // Atributos:
+            AudioAttributes sn_atrib = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .build();
+
+            sn_punto = new SoundPool.Builder()
+                    .setMaxStreams(10)
+                    .setAudioAttributes(sn_atrib)
+                    .build();
+
+            sn_fin = new SoundPool.Builder()
+                    .setMaxStreams(10)
+                    .setAudioAttributes(sn_atrib)
+                    .build();
+
+        }
+        else{
+            sn_punto = new SoundPool(10, AudioManager.STREAM_MUSIC,1);
+            sn_fin = new SoundPool(10, AudioManager.STREAM_MUSIC,1);
+        }
+
+        sn_punto_id = sn_punto.load(this,R.raw.punto,1);
+        sn_fin_id = sn_fin.load(this,R.raw.fin,1);
+
     }
 
     /**
@@ -152,6 +200,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 System.out.println("-------------------- MAPAS: OnMapReady");
                 mMap.setMyLocationEnabled(true);
+
+                // MÚSICA
+                mp.start();
 
                 // Añadimos un marcador en la posición de inicio:
                 //LatLng inicio = new LatLng(posicionActual.getLatitude(), posicionActual.getLongitude());
@@ -250,12 +301,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         float distance = posicionActual.distanceTo(posicionJuego);
                         System.out.println("DISTANCIA: " + distance);
 
-                        //Si hay menos de 2 metros:
-                        if (distance<2){
+                        //Si hay menos de 50 metros:
+                        if (distance<50){
 
                             // UBICACIÓN CORRECTA:
                             // Si es la última ubicación, mostramos un mensaje y almacenamos los datos del juego:
                             if (indice == lugares.size() - 1){
+
+                                // Sonido:
+                                sn_fin.play(sn_fin_id,1,1,1,0,1);
+
+                                // Marcador:
+                                LatLng posicion = new LatLng(posicionJuego.getLatitude(),posicionJuego.getLongitude());
+                                mMap.addMarker( new MarkerOptions()
+                                        .position(posicion)
+                                        .title( indice+"º PUNTO" )
+                                        .icon( BitmapDescriptorFactory.defaultMarker(
+                                                BitmapDescriptorFactory.HUE_RED )));
 
                                 // Construimos el mensaje:
                                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -284,29 +346,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 findViewById(R.id.opt_comprobar).setEnabled(false);
                                 findViewById(R.id.opt_pista).setEnabled(false);
 
-                                // Almacenamos los datos del juego:
-                                // >>>>> PARTE DE JONATHAN
+                                // Guardamos el archivo:
+
+                                // FECHA:
+                                Date fecha = new Date();
+
+                                // TITULO:
+                                String f_titulo = "Datos" + persona.getNombre() + ".txt";
+                                // TEXTO:
+                                String f_texto = "Jugador: " + persona.getNombre() + " - " + persona.getEdad() + " > " + fecha.toString();
+
+                                // ARCHIVO:
+                                GestionFicheros.escribirFichero(f_titulo,f_texto);
 
                             }
                             // Si no es la última ubicación, mostramos un mensaje y avanzamos a la ubicación siguiente:
                             else{
+                                // Sonido:
+                                sn_punto.play(sn_punto_id,1,1,1,0,1);
+                                // Marcador:
+                                LatLng posicion = new LatLng(posicionJuego.getLatitude(),posicionJuego.getLongitude());
+                                mMap.addMarker( new MarkerOptions()
+                                        .position(posicion)
+                                        .title( indice+"º PUNTO" )
+                                        .icon( BitmapDescriptorFactory.defaultMarker(
+                                                BitmapDescriptorFactory.HUE_RED )));
                                 // Mensaje:
                                 String text = getResources().getString(R.string.ub_correcta);
                                 Spannable centeredText = new SpannableString(text);
                                 centeredText.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0, text.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                                 Toast.makeText(MapsActivity.this, centeredText, Toast.LENGTH_SHORT ).show();
-                                LatLng posicion = new LatLng(posicionJuego.getLatitude(),posicionJuego.getLongitude());
-                                mMap.addMarker( new MarkerOptions()
-                                        .position(posicion)
-                                        .title( indice+"º Pista" )
-                                        .icon( BitmapDescriptorFactory.defaultMarker(
-                                                BitmapDescriptorFactory.HUE_RED )));
                                 // Lugar:
                                 indice = indice + 1;
                                 lugar = lugares.get(indice);
                             }
                         }
-                        //Si hay más de 2 metros:
+                        //Si hay más de 50 metros:
                         else{
                             // UBICACIÓN INCORRECTA:
                             // Mensaje:
