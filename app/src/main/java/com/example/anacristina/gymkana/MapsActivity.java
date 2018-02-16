@@ -50,22 +50,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
 
     // Datos del jugador:
-    Persona persona;
+    protected Persona persona;
 
     // BASE DE DATOS:
-    SQLiteDatabase b_datos;
+    protected SQLiteDatabase b_datos;
 
     // ARRAY - Lugares:
-    ArrayList<Lugar> lugares;
+    protected ArrayList<Lugar> lugares;
 
     // LUGAR:
-    Lugar lugar;
+    protected Lugar lugar;
 
     // INDICE:
-    int indice;
+    protected int indice;
 
     //MUSICA:
-    MediaPlayer mp;
+    protected MediaPlayer mp;
 
     // SONIDOS:
     protected SoundPool sn_punto;
@@ -134,7 +134,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //MUSICA:
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        mp = MediaPlayer.create(this, R.raw.ffxbattle_theme);
+        mp = MediaPlayer.create(this, R.raw.main_theme);
         mp.setLooping(true);
 
         // SONIDOS - Sonidos:
@@ -251,6 +251,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Almacenamos el ID de la opción selecionada:
         int opcion = opcion_menu.getItemId();
+
+        // MÚSICA:
+        if(opcion==R.id.opt_musica){
+
+            // Si la música se está reproduciendo, la paramos:
+            if(mp.isPlaying()){
+                mp.pause();
+                // Cambiar icono:
+                opcion_menu.setIcon(android.R.drawable.ic_media_play);
+            }
+            // Si la música está pausada, la reproducimos:
+            else{
+                mp.start();
+                // Cambiar icono:
+                opcion_menu.setIcon(android.R.drawable.ic_media_pause);
+            }
+            return true;
+        }
 
         // COMPROBAR:
         if (opcion == R.id.opt_comprobar) {
@@ -460,4 +478,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Paramos la música:
         mp.stop();
     }
+
 }

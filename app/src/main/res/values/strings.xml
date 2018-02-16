@@ -11,7 +11,8 @@
     <string name="am_error">DEBE RELLENAR TODOS LOS CAMPOS PARA PODER JUGAR</string>
 
     <!--Elementos MapsActivity-->
-    <string name="title_activity_maps">MAP</string>
+    <string name="title_activity_maps">GYMKANA - MAPA</string>
+    <string name="t_musica">MÚSICA</string>
     <string name="t_comprobar">COMPROBAR</string>
     <string name="t_pista">PISTA</string>
 
