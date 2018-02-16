@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                                             "'I.E.S. Juan Bosco'," +
                                             "'39.39192219660964'," +
                                             "'-3.222019672393799'," +
-                                            "'PISTA 1');";
+                                            "'Instituto que ocupa la posición correspondiente al primer número primo.');";
         b_datos.execSQL(sql_Insertar1);
         // LUGAR 2:
         String sql_Insertar2 = "INSERT INTO LUGARES (ID, NOMBRE, LATITUD, LONGITUD, PISTA) " +
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                                             "'I.E.S. María Zambrano'," +
                                             "'39.39188073913813'," +
                                             "'-3.221096992492676'," +
-                                            "'PISTA 2');";
+                                            "'Lugar cuyo nombre hace referencia a la ganadora del Premio Cervantes de 1988.');";
         b_datos.execSQL(sql_Insertar2);
         // LUGAR 3:
         String sql_Insertar3 = "INSERT INTO LUGARES (ID, NOMBRE, LATITUD, LONGITUD, PISTA) " +
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                                             "'Multicines CineMancha'," +
                                             "'39.39264769837342'," +
                                             "'-3.219396471977234'," +
-                                            "'PISTA 3');";
+                                            "'Lugar que existe gracias a los Hermanos Lumière.');";
         b_datos.execSQL(sql_Insertar3);
         // LUGAR 4:
         String sql_Insertar4 = "INSERT INTO LUGARES (ID, NOMBRE, LATITUD, LONGITUD, PISTA) " +
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                                             "'Old Dublin'," +
                                             "'39.39234298855147'," +
                                             "'-3.2206732034683228'," +
-                                            "'PISTA 4');";
+                                            "'Ecalp der a ot og.');";
         b_datos.execSQL(sql_Insertar4);
         // LUGAR 4:
         String sql_Insertar5 = "INSERT INTO LUGARES (ID, NOMBRE, LATITUD, LONGITUD, PISTA) " +
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                                             "'Cervecería - La Antigua'," +
                                             "'39.39211290066128'," +
                                             "'-3.2222208380699158'," +
-                                            "'PISTA 5');";
+                                            "'Cervecería más nueva de la zona.');";
         b_datos.execSQL(sql_Insertar5);
 
     }
