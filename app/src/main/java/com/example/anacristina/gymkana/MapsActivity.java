@@ -17,6 +17,7 @@ import android.media.SoundPool;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -63,6 +64,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // INDICE:
     protected int indice;
+
+    // PUNTOS:
+    protected double punt_partida;
+
+    // PUNTUACIÓN PUNTO:
+    protected double punt_punto;
+
+    // TIMER:
+    CountDownTimer timer;
+    protected boolean tiempo;
 
     //MUSICA:
     protected MediaPlayer mp;
@@ -201,8 +212,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 System.out.println("-------------------- MAPAS: OnMapReady");
                 mMap.setMyLocationEnabled(true);
 
-                // MÚSICA
+                // MÚSICA:
                 mp.start();
+
+                // PUNTOS:
+                punt_partida = 0;
+
+                // PUNTUACIÓN PUNTO:
+                punt_punto = 50.0;
+
+                // TIMER:
+                iniciarTiempo();
+                timer.start();
 
                 // Añadimos un marcador en la posición de inicio:
                 //LatLng inicio = new LatLng(posicionActual.getLatitude(), posicionActual.getLongitude());
@@ -364,6 +385,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 findViewById(R.id.opt_comprobar).setEnabled(false);
                                 findViewById(R.id.opt_pista).setEnabled(false);
 
+                                // PUNTOS:
+                                punt_partida = punt_partida + punt_punto;
+
                                 // Guardamos el archivo:
 
                                 // FECHA:
@@ -372,7 +396,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 // TITULO:
                                 String f_titulo = "Datos" + persona.getNombre() + ".txt";
                                 // TEXTO:
-                                String f_texto = "Jugador: " + persona.getNombre() + " - " + persona.getEdad() + " > " + fecha.toString();
+                                String f_texto = "Jugador: " + persona.getNombre() + " - " + persona.getEdad() + " > PUNTOS: " + punt_partida + " - " + fecha.toString();
 
                                 // ARCHIVO:
                                 GestionFicheros.escribirFichero(f_titulo,f_texto);
@@ -389,6 +413,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         .title( indice+"º PUNTO" )
                                         .icon( BitmapDescriptorFactory.defaultMarker(
                                                 BitmapDescriptorFactory.HUE_RED )));
+                                // PUNTOS:
+                                punt_partida = punt_partida + punt_punto;
+                                // PUNTUACIÓN PUNTO:
+                                punt_punto = 50.0;
+                                // TIMER:
+                                if (tiempo){
+                                    timer.cancel();
+                                }
+                                iniciarTiempo();
+                                timer.start();
                                 // Mensaje:
                                 String text = getResources().getString(R.string.ub_correcta);
                                 Spannable centeredText = new SpannableString(text);
@@ -442,6 +476,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // PISTA:
         if(opcion==R.id.opt_pista){
 
+            // PUNTUACIÓN PUNTO:
+            punt_punto = punt_punto/2;
+
             // Construimos el mensaje:
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             // TÍTULO:
@@ -470,6 +507,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return false;
 
+    }
+
+    protected void iniciarTiempo(){
+
+        tiempo = true;
+
+        // CREAMOS EL TIMER:
+        timer = new CountDownTimer(18000,1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                tiempo = false;
+                // PUNTUACIÓN PUNTO:
+                punt_punto = punt_punto/2;
+            }
+        };
     }
 
     @Override

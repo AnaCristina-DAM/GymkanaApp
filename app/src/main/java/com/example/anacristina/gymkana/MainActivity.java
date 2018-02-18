@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                                             "'-3.2206732034683228'," +
                                             "'Ecalp der a ot og.');";
         b_datos.execSQL(sql_Insertar4);
-        // LUGAR 4:
+        // LUGAR 5:
         String sql_Insertar5 = "INSERT INTO LUGARES (ID, NOMBRE, LATITUD, LONGITUD, PISTA) " +
                                     "VALUES ('5', " +
                                             "'Cervecería - La Antigua'," +
