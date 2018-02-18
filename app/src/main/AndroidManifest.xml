@@ -33,7 +33,8 @@
         android:theme="@style/AppTheme">
 
         <!-- Bloqueamos la orientación de la pantalla de registro. -->
-        <activity android:name=".MainActivity" android:screenOrientation="portrait">
+        <!-- Controlamos que no se reinicie el juego con el atributo "android:configChanges". -->
+        <activity android:name=".MainActivity" android:screenOrientation="portrait" android:configChanges="screenSize|orientation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
